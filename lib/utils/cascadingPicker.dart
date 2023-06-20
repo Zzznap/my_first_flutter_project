@@ -118,41 +118,6 @@ class _CascadingDropdownState extends State<CascadingDropdown>  with SingleTicke
                 ),
                 ),
               ],
-            // children: [
-            //   Container(
-            //     width: double.infinity,
-            //     child: Row(
-            //       mainAxisSize: MainAxisSize.min,
-            //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //       children: [
-            //         Expanded(
-            //           child: Container(
-            //               child: ListView(
-            //                 children: [
-            //                   Text("选择1"),
-            //                   Text("选择2"),
-            //                   Text("选择3"),
-            //                 ],
-            //               )
-            //           ),
-            //         ),
-            //         Expanded(
-            //           child: Container(
-            //               color: Colors.grey,
-            //               child: ListView(
-            //                 children: [
-            //                   Text("选择1"),
-            //                   Text("选择2"),
-            //                   Text("选择3"),
-            //                 ],
-            //               )
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            //
-            // ],
           )
 
         );
