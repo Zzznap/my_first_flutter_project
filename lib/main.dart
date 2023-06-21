@@ -1,12 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:my_first_flutter_project/screens/TabBar.dart';
+import 'package:my_first_flutter_project/screens/login.dart';
 import 'package:my_first_flutter_project/utils/VerticalTabbedList.dart';
-import 'package:my_first_flutter_project/utils/cascadingPicker.dart';
-import '/widget/selectImage.dart';
 
-import 'TabBar.dart';
-import 'login.dart';
 void main() {
   runApp(const MyApp());
 }

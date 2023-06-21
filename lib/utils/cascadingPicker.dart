@@ -1,64 +1,114 @@
 import 'package:flutter/material.dart';
+import 'package:my_first_flutter_project/utils/VerticalTabbedList.dart';
 
 class CascadingDropdown extends StatefulWidget {
+  final  callback;
+
+  const CascadingDropdown({this.callback});
+
   @override
   _CascadingDropdownState createState() => _CascadingDropdownState();
 }
 
 class _CascadingDropdownState extends State<CascadingDropdown>  with SingleTickerProviderStateMixin{
-  late AnimationController _animationController;
-  late Animation<Offset> _animation;
 
+  int selectedIndex = 0;
+  late TabController _tabController;
+  final List<String> tabs = ['ops', 'ops2', 'ops3'];
+  final List<Map<String,bool>> tabsView= [];
+  final List<String> selected=[];
   bool _isVisible = false;
-
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: tabs.length, vsync: this);
+    tabsView.add({'史洋洋':false, '徐熠州':false, '吴维':false,'丁承霄':false,'李松':false} );
+    tabsView.add({'史洋洋2':false, '徐熠州2':false, '吴维2':false,'丁承霄2':false,'李松2':false} );
+    tabsView.add({'史洋洋3':false, '徐熠州3':false, '吴维3':false,'丁承霄3':false,'李松3':false} );
 
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-    _animation = Tween<Offset>(
-      begin: Offset(0.0, 1.0),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
-    );
-    _animationController.forward();
   }
-
+  void changeSelect(String tab,String name){
+    setState(() {
+      if (selected.contains(name))
+        selected.remove(name);
+      else
+        selected.add(name);
+      tabsView[tabs.indexOf(tab)][name] = !tabsView[tabs.indexOf(tab)][name]!;
+      widget.callback(selected);
+    });
+    print(selected);
+  }
+  Widget getTabsView(String tab, StateSetter state){
+    return ListView(
+      children: tabsView[tabs.indexOf(tab)].keys.map((String name) {
+        return ListTile(
+          title: Text(name),
+          selected: tabsView[tabs.indexOf(tab)][name]!,
+          onTap: () {
+            state(() {
+              changeSelect(tab,name);
+            });
+          },
+        );
+      }).toList(),
+    );
+  }
   @override
   void dispose() {
-    _animationController.dispose();
+    _tabController.dispose();
+    // _animationController.dispose();
     super.dispose();
   }
-  void _toggleVisibility() {
-    addWeight();
+  void changeSelectedIndex(int index){
     setState(() {
-      _isVisible = !_isVisible;
-      //
-      // if (_isVisible) {
-      //   _animationController.forward();
-      // } else {
-      //   _animationController.reverse();
-      // }
+      selectedIndex = index;
     });
   }
+  Widget tabSMainView(StateSetter state){
+    return Row(
+      children: [
+        Expanded(
+          child: ListView(
+            children: tabs.map((String tab) {
+              return ListTile(
+                title: Text(tab),
+                selected: tabs.indexOf(tab) == selectedIndex,
+                onTap: () {
+                  state(() {
+                    changeSelectedIndex(tabs.indexOf(tab));
+                  });
+                  _tabController.animateTo(
+                    tabs.indexOf(tab),
+                  );
+                },
+              );
+            }).toList(),
+          ),
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: tabs.map((String tab) {
+              return getTabsView(tab,state);
+            }).toList(),
+          ),
+        ),
+      ],
+    );
+
+  }
+
   void addWeight() {
     showModalBottomSheet(
-      isScrollControlled: true,
       context: context,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(24),
           topRight: Radius.circular(24),
         ),
       ),
-      builder: (context) {
+      builder: (context) => StatefulBuilder(
+      builder: (context,setState) {
         var date = DateTime.now();
         return Container(
           color: Colors.white,
@@ -66,82 +116,51 @@ class _CascadingDropdownState extends State<CascadingDropdown>  with SingleTicke
           padding: const EdgeInsets.all(16.0),
           child: Column(
               children: [
-                Container(
-                  height: 50,
-                  child: Row(
+                Expanded(
+
+                  child: Container(
+                    child:Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("选择水印"),
-                      ElevatedButton(onPressed: (){
-
-                        },
-                          child: Text("确定") ),
-                    ],
-                  ),
-                ),
-                Container(
-                  child: Row(
-                    children: [
+                      Expanded(child: ListView(
+                        children: [
+                          Text("选择水印文字:",style: TextStyle(fontSize: 20),),
+                          Text(selected.join(',')),
+                        ],
+                      )),
                       Expanded(
-                        child: Container(
-                          child: SingleChildScrollView(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: 2, // 你的项数
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text('Item $index'),
-                                );
+                        child: ElevatedButton(onPressed: (){
+
                               },
-                            ),
-                          ),
-
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                            color: Color.fromRGBO(248,248,250, 1),
-                            child: SingleChildScrollView(
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: 2, // 你的项数
-                                itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text('Item $index'),
-                                  );
-                                },
-                              ),
-                            ),
-                        ),
-                      ),
+                          child: Text("确定") ),),
                     ],
+                  ),)
                 ),
-                ),
+                Expanded(
+                    child: tabSMainView(setState),
+                )
+
               ],
           )
 
         );
-      },
+      },)
     );
+  }
+  Widget? addTabList(BuildContext context){
+    return null;
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('级联选择器'),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(
-            child: ElevatedButton(
-              onPressed: addWeight,
-              child: Text('选择水印'),
-            ),
-          ),
-        ],
-      ),
+    return ElevatedButton(
+      onPressed: addWeight,
+      child: Text('选择水印'),
     );
     }
 
 }
+// void main() {
+//   runApp(MaterialApp(
+//     home: CascadingDropdown(selected: [], updateSelectedWaterMark: (List<String> ) {  },),
+//   ));
+// }
