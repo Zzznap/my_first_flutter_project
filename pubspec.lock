@@ -320,6 +320,14 @@ packages:
       url: "https://mirror.sjtu.edu.cn/dart-pub/"
     source: hosted
     version: "0.2.1"
+  jpush_flutter:
+    dependency: "direct main"
+    description:
+      name: jpush_flutter
+      sha256: "938f6e88ee8a1b1e67dfafc8115d31d2f62ae3ca0b11532d00c019d3bf6c8bcf"
+      url: "https://mirror.sjtu.edu.cn/dart-pub/"
+    source: hosted
+    version: "2.4.4"
   js:
     dependency: transitive
     description:
